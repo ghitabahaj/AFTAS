@@ -20,7 +20,7 @@ public class MemberRest{
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity getMemberById(@PathVariable Long id) {
+    public ResponseEntity<?>  getMemberById(@PathVariable Long id) {
         Member member = memberService.getMemberById(id);
         if(member == null) {
             return ResponseMessage.notFound("Member not found");
@@ -30,17 +30,17 @@ public class MemberRest{
     }
 
     @PostMapping
-    public ResponseEntity addMember(@Valid @RequestBody Member member) {
-        Member member1 = memberService.addMember(member);
-        if(member1 == null) {
-            return ResponseMessage.badRequest("Member not created");
+    public ResponseEntity<?>  addMember(@Valid @RequestBody Member member) {
+        Member savedmember = memberService.addMember(member);
+        if(savedmember == null) {
+            return (ResponseEntity<?>) ResponseEntity.badRequest();
         }else {
-            return ResponseMessage.created("Member created successfully", member1);
+            return ResponseEntity.ok(savedmember);
         }
     }
 
     @GetMapping
-    public ResponseEntity searchMember(@RequestBody String name) {
+    public ResponseEntity<?>  searchMember(@RequestBody String name) {
         List<Member> members = memberService.searchMember(name);
         if(members.isEmpty()) {
             return ResponseMessage.notFound("Member not found");
@@ -50,7 +50,7 @@ public class MemberRest{
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity updateMember(@RequestBody Member member, @PathVariable Long id) {
+    public ResponseEntity<?>  updateMember(@RequestBody Member member, @PathVariable Long id) {
         Member member1 = memberService.updateMember(member, id);
         if(member1 == null) {
             return ResponseMessage.badRequest("Member not updated");
@@ -59,14 +59,4 @@ public class MemberRest{
         }
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity deleteMember(@PathVariable Long id) {
-        Member member = memberService.getMemberById(id);
-        if(member == null) {
-            return ResponseMessage.notFound("Member not found");
-        }else {
-            memberService.deleteMember(id);
-            return ResponseMessage.ok("Member deleted successfully", member);
-        }
-    }
 }
