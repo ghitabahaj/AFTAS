@@ -4,6 +4,8 @@ import com.youcode.aftas.entities.*;
 import com.youcode.aftas.repository.CompetitionRepository;
 import com.youcode.aftas.service.CompetitionService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -37,4 +39,15 @@ public class CompetitionServiceImpl implements CompetitionService {
             return competitionRepository.save(competition);
         }
     }
+
+    @Override
+    public Optional<Competition> findByCode(String code) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Page<Competition> findAll(Pageable pageable) {
+        return competitionRepository.findAll(pageable);
+    }
+
 }
