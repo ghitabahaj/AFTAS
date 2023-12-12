@@ -5,12 +5,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -27,6 +26,7 @@ public class Competition {
     private Long id;
 
     @NotBlank(message = "Code is required")
+    @Pattern(regexp = "^ims-\\d{2}-\\d{2}-\\d{2}$", message = "Invalid competition code format")
     private String code;
 
     @NotNull(message = "Date is required")

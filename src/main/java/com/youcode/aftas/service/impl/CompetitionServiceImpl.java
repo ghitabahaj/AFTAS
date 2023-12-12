@@ -57,7 +57,15 @@ public class CompetitionServiceImpl implements CompetitionService {
 
     @Override
     public Optional<Competition> findByCode(String code) {
-        return Optional.empty();
+        if (code == null || code.isEmpty()) {
+            throw new IllegalArgumentException("Code should not be Empty or null");
+        }
+
+        if (competitionRepository.findByCode(code).isEmpty()){
+             throw new IllegalArgumentException("Competition with code " + code + "could not be found");
+        }
+
+        return competitionRepository.findByCode(code);
     }
 
     @Override
