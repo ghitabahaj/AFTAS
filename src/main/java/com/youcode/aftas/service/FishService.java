@@ -15,7 +15,7 @@ public interface FishService {
 
     Fish getFish(String name);
 
-    Fish getFishById(String id);
+    Fish getFishById(Long id);
 
     Fish updateFish(Fish fish);
 
