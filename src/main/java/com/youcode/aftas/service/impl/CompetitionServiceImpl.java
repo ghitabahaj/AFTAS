@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -20,24 +21,38 @@ public class CompetitionServiceImpl implements CompetitionService {
 
     @Override
     public Competition addCompetition(Competition competition) {
-        Optional<Competition> existingCompetition = competitionRepository.findById(competition.getId());
-        if (existingCompetition.isPresent()) {
-            Competition existing = existingCompetition.get();
-            int totalFishes = 0;
-            List<Ranking> existingRankings = existing.getRankings();
-            for (Ranking ranking : existingRankings) {
-                Member member = ranking.getMember();
-                List<Hunting> huntings = member.getHuntings();
-                for (Hunting hunting : huntings) {
-                    Fish fish = hunting.getFish();
-                    totalFishes += (int) (Integer.parseInt(hunting.getNumberOfFishes()) * fish.getAverageWeight());
-                }
-            }
-            existing.setAmountOfFish(totalFishes);
-            return competitionRepository.save(existing);
+
+        if (!competition.getStartTime().equals(competition.getEndTime()) && competition.getEndTime().isAfter(competition.getStartTime())) {
+
+             if (competition.getDate().isAfter(LocalDate.now()) && !competition.getDate().isBefore(LocalDate.now()) ) {
+
+                  if (!isCompetitionExistsOnSameDay(competition.getDate())){
+
+                      Optional<Competition> existingCompetition = competitionRepository.findById(competition.getId());
+
+                      if (existingCompetition.isPresent()) {
+
+                          Competition existing = existingCompetition.get();
+
+
+
+                          return competitionRepository.save(existing);
+
+                      } else {
+
+                          return competitionRepository.save(competition);
+
+                      }
+                  } else {
+                      throw new IllegalArgumentException("There is already a competition scheduled on the same day.");
+                  }
+             } else {
+                 throw new IllegalArgumentException("Competition date must be today or a future date.");
+             }
         } else {
-            return competitionRepository.save(competition);
+            throw new IllegalArgumentException("Invalid start and end times for the competition.");
         }
+
     }
 
     @Override
@@ -50,4 +65,8 @@ public class CompetitionServiceImpl implements CompetitionService {
         return competitionRepository.findAll(pageable);
     }
 
+
+    public boolean isCompetitionExistsOnSameDay(LocalDate date){
+        return  competitionRepository.existsByDate(date);
+    }
 }

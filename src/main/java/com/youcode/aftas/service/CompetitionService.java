@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -15,6 +16,8 @@ public interface CompetitionService {
     Competition addCompetition(Competition competition);
     Optional<Competition> findByCode(String code);
     Page<Competition> findAll(Pageable pageable);
+
+    boolean isCompetitionExistsOnSameDay(LocalDate date);
 
 
 }
