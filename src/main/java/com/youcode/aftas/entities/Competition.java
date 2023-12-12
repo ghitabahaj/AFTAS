@@ -50,4 +50,12 @@ public class Competition {
     @OneToMany(mappedBy = "competition")
     private List<Ranking> rankings;
 
+    @ManyToMany
+    @JoinTable(
+            name = "competition_participants",
+            joinColumns = @JoinColumn(name = "competition_id"),
+            inverseJoinColumns = @JoinColumn(name = "member_id")
+    )
+    private List<Member> participants;
+
 }

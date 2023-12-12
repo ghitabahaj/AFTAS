@@ -19,5 +19,7 @@ public interface CompetitionService {
 
     boolean isCompetitionExistsOnSameDay(LocalDate date);
 
+    Competition updateCompetition(Competition competition);
+
 
 }
