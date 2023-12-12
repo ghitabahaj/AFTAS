@@ -15,6 +15,5 @@ public interface MemberService {
     List<Member> searchMember(String name);
     Member updateMember(Member member, Long id);
     void deleteMember(Long id);
-
     void registerInCompetition(Member member, Competition competition);
 }

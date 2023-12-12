@@ -6,12 +6,14 @@ import com.youcode.aftas.entities.Ranking;
 import com.youcode.aftas.repository.CompetitionRepository;
 import com.youcode.aftas.repository.MemberRepository;
 import com.youcode.aftas.service.MemberService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class MemberServiceImpl implements MemberService {
@@ -35,6 +37,11 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public Member addMember(Member member) {
+
+        if (memberRepository.existsByIdentityNumber(member.getIdentityNumber())) {
+            throw new IllegalArgumentException("Member with the same identityNumber already exists");
+        }
+
         return memberRepository.save(member);
     }
 
@@ -62,6 +69,11 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void registerInCompetition(Member member, Competition competition) {
+
+        Optional<Member> existingMember = memberRepository.findByIdentityNumber(member.getIdentityNumber());
+        if (existingMember.isEmpty()) {
+            throw new EntityNotFoundException("Member not found with identityNumber: " + member.getIdentityNumber());
+        }
 
         if (isRegistrationAllowed(member, competition)) {
 
