@@ -16,7 +16,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class FishServiceImpl implements FishService {
 
-    final private  FishRepository fishRepository;
+    private final  FishRepository fishRepository;
 
     @Override
     public Fish addFish(Fish fish) {

@@ -1,5 +1,6 @@
 package com.youcode.aftas.service;
 
+import com.youcode.aftas.entities.Competition;
 import com.youcode.aftas.entities.Member;
 import org.springframework.stereotype.Service;
 
@@ -14,4 +15,6 @@ public interface MemberService {
     List<Member> searchMember(String name);
     Member updateMember(Member member, Long id);
     void deleteMember(Long id);
+
+    void registerInCompetition(Member member, Competition competition);
 }

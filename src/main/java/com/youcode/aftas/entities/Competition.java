@@ -11,6 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -33,10 +34,10 @@ public class Competition {
     private LocalDate date;
 
     @NotNull(message = "Start time is required")
-    private LocalTime startTime;
+    private LocalDateTime startTime;
 
     @NotNull(message = "End time is required")
-    private LocalTime endTime;
+    private LocalDateTime endTime;
 
     @Min(value = 1, message = "Number of participants must be at least 1")
     private int numberOfParticipants;
