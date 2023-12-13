@@ -1,9 +1,8 @@
 package com.youcode.aftas.service.impl;
 
-import com.youcode.aftas.entities.Competition;
-import com.youcode.aftas.entities.Member;
-import com.youcode.aftas.entities.Ranking;
+import com.youcode.aftas.entities.*;
 import com.youcode.aftas.repository.CompetitionRepository;
+import com.youcode.aftas.repository.HuntingRepository;
 import com.youcode.aftas.repository.MemberRepository;
 import com.youcode.aftas.service.MemberService;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,11 +23,14 @@ public class MemberServiceImpl implements MemberService {
 
     @Autowired
     private final CompetitionRepository competitionRepository;
+    private final HuntingRepository huntingRepository;
 
 
-    public MemberServiceImpl(MemberRepository memberRepository, CompetitionRepository competitionRepository) {
+    public MemberServiceImpl(MemberRepository memberRepository, CompetitionRepository competitionRepository,
+                             HuntingRepository huntingRepository) {
         this.memberRepository = memberRepository;
         this.competitionRepository = competitionRepository;
+        this.huntingRepository = huntingRepository;
     }
     @Override
     public Member getMemberById(Long id) {
@@ -46,8 +48,14 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public List<Member> searchMember(String name) {
-        return memberRepository.findByName(name);
+    public List<Member> searchMember(String keySearch) {
+        if (keySearch.matches("\\d+")) {
+
+            return this.memberRepository.findByNumOrNameOrFamilyName(Integer.valueOf(keySearch), "", "");
+        } else {
+
+            return this.memberRepository.findByNumOrNameOrFamilyName(null, keySearch, keySearch);
+        }
     }
 
     @Override
@@ -104,4 +112,6 @@ public class MemberServiceImpl implements MemberService {
         LocalDateTime currentDateTime = LocalDateTime.now();
         return currentDateTime.isBefore(registrationDeadline);
     }
+
+
 }

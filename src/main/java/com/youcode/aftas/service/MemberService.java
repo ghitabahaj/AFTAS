@@ -12,8 +12,10 @@ public interface MemberService {
 
     Member getMemberById(Long id);
     Member addMember(Member member);
-    List<Member> searchMember(String name);
+    List<Member> searchMember(String keySearch);
     Member updateMember(Member member, Long id);
     void deleteMember(Long id);
     void registerInCompetition(Member member, Competition competition);
+
+
 }
