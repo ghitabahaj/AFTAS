@@ -9,6 +9,7 @@ public record FishResDto(
         String name,
         Double averageWeight,
         Level level
+
 ) {
 
 }
