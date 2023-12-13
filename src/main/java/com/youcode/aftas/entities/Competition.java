@@ -27,17 +27,17 @@ public class Competition {
     private Long id;
 
     @NotBlank(message = "Code is required")
-    @Pattern(regexp = "^ims-\\d{2}-\\d{2}-\\d{2}$", message = "Invalid competition code format")
+    @Column(unique = true)
     private String code;
 
     @NotNull(message = "Date is required")
     private LocalDate date;
 
     @NotNull(message = "Start time is required")
-    private LocalDateTime startTime;
+    private LocalTime startTime;
 
     @NotNull(message = "End time is required")
-    private LocalDateTime endTime;
+    private LocalTime endTime;
 
     @Min(value = 1, message = "Number of participants must be at least 1")
     private int numberOfParticipants;
@@ -45,17 +45,10 @@ public class Competition {
     @NotBlank(message = "Location is required")
     private String location;
 
-    private int amountOfFish;
+    private Double amount;
 
     @OneToMany(mappedBy = "competition")
     private List<Ranking> rankings;
 
-    @ManyToMany
-    @JoinTable(
-            name = "competition_participants",
-            joinColumns = @JoinColumn(name = "competition_id"),
-            inverseJoinColumns = @JoinColumn(name = "member_id")
-    )
-    private List<Member> participants;
 
 }

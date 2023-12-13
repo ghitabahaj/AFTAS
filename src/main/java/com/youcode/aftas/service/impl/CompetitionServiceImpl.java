@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,15 +31,11 @@ public class CompetitionServiceImpl implements CompetitionService {
         if (!competition.getStartTime().equals(competition.getEndTime()) && competition.getEndTime().isAfter(competition.getStartTime())) {
             if (!isCompetitionExistsOnSameDay(competition.getDate())) {
                 if (competition.getId() == null) {
+                    String locationAbbreviation = competition.getLocation().substring(0, Math.min(competition.getLocation().length(), 3));
+                    String formattedDate = competition.getDate().format(DateTimeFormatter.ofPattern("dd-MM-yy"));
+                    String generatedName = locationAbbreviation + "-" + formattedDate;
+                    competition.setCode(generatedName);
                     return competitionRepository.save(competition);
-                } else {
-                    Optional<Competition> existingCompetition = competitionRepository.findById(competition.getId());
-                    if (existingCompetition.isPresent()) {
-                        Competition existing = existingCompetition.get();
-                        return competitionRepository.save(existing);
-                    } else {
-                        throw new IllegalStateException("Competition with id " + competition.getId() + " not found.");
-                    }
                 }
             } else {
                 throw new IllegalArgumentException("There is already a competition scheduled on the same day.");
@@ -47,6 +44,7 @@ public class CompetitionServiceImpl implements CompetitionService {
             throw new IllegalArgumentException("Invalid start and end times for the competition.");
         }
 
+        return competition;
     }
 
     @Override
@@ -91,10 +89,15 @@ public class CompetitionServiceImpl implements CompetitionService {
         existing.setEndTime(competition.getEndTime());
         existing.setNumberOfParticipants(competition.getNumberOfParticipants());
         existing.setLocation(competition.getLocation());
-        existing.setAmountOfFish(competition.getAmountOfFish());
+        existing.setAmount(competition.getAmount());
         existing.setRankings(competition.getRankings());
 
         return competitionRepository.save(existing);
+    }
+
+    @Override
+    public List<Competition> findAll() {
+        return competitionRepository.findAll();
     }
 
 }

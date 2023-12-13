@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,13 +50,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public List<Member> searchMember(String keySearch) {
-        if (keySearch.matches("\\d+")) {
 
-            return this.memberRepository.findByNumOrNameOrFamilyName(Integer.valueOf(keySearch), "", "");
-        } else {
+            return this.memberRepository.findByIdentityNumberOrNameOrFamilyName(keySearch, keySearch, keySearch);
 
-            return this.memberRepository.findByNumOrNameOrFamilyName(null, keySearch, keySearch);
-        }
     }
 
     @Override
@@ -108,8 +105,8 @@ public class MemberServiceImpl implements MemberService {
     }
 
     private boolean isRegistrationAllowed(Member member, Competition competition) {
-        LocalDateTime registrationDeadline = competition.getStartTime().minusHours(24);
-        LocalDateTime currentDateTime = LocalDateTime.now();
+        LocalTime registrationDeadline = competition.getStartTime().minusHours(24);
+        LocalTime currentDateTime = LocalTime.now();
         return currentDateTime.isBefore(registrationDeadline);
     }
 

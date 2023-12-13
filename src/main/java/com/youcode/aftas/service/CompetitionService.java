@@ -8,6 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,6 +21,8 @@ public interface CompetitionService {
     boolean isCompetitionExistsOnSameDay(LocalDate date);
 
     Competition updateCompetition(Competition competition);
+
+    List<Competition> findAll();
 
 
 }

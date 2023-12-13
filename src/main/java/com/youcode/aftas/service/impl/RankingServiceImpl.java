@@ -14,7 +14,7 @@ import java.util.Optional;
 @Component
 public class RankingServiceImpl implements RankingService {
 
-    final private RankingRepository rankingRepository;
+    private final RankingRepository rankingRepository;
 
     public RankingServiceImpl(RankingRepository rankingRepository) {
         this.rankingRepository = rankingRepository;

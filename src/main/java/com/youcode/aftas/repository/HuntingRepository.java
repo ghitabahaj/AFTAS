@@ -13,7 +13,7 @@ import java.util.List;
 @Repository
 public interface HuntingRepository extends JpaRepository<Hunting, Long> {
 
-    List<Hunting> findByCompetitionAndMemberAndFish(Competition competition, Member member);
+    List<Hunting> findByCompetitionAndMember(Competition competition, Member member);
 
     Hunting findHuntingByFishAndMemberAndCompetition(Fish fish, Member member,Competition competition);
 }

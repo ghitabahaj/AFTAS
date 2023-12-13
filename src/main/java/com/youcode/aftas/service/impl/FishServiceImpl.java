@@ -1,10 +1,14 @@
 package com.youcode.aftas.service.impl;
 
 
+import com.youcode.aftas.DTO.FishDTO.FishDTO;
+import com.youcode.aftas.DTO.FishDTO.requests.FishReqDto;
 import com.youcode.aftas.entities.Competition;
 import com.youcode.aftas.entities.Fish;
+import com.youcode.aftas.entities.Level;
 import com.youcode.aftas.handler.exception.AlreadyExistsException;
 import com.youcode.aftas.repository.FishRepository;
+import com.youcode.aftas.repository.LevelRepository;
 import com.youcode.aftas.service.FishService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -17,22 +21,30 @@ import java.util.Optional;
 public class FishServiceImpl implements FishService {
 
     private final  FishRepository fishRepository;
+    private final LevelRepository levelRepository;
 
     @Override
-    public Fish addFish(Fish fish) {
-        if (fish.getName() == null || fish.getName().trim().isEmpty()) {
+    public Fish addFish(FishReqDto fish) {
+        if (fish.name() == null || fish.name().trim().isEmpty()) {
             throw new IllegalArgumentException("Fish name cannot be null or empty");
         }
 
-        if (fish.getAverageWeight() == 0){
+        if (fish.averageWeight() == 0){
             throw new IllegalArgumentException("Fish average weight cannot be 0");
         }
 
-        if (fishRepository.existsByName(fish.getName())) {
-            throw new AlreadyExistsException("Fish with name " + fish.getName() + " already exists");
+        if (fishRepository.existsByName(fish.name())) {
+            throw new AlreadyExistsException("Fish with name " + fish.name() + " already exists");
         }
+        Optional<Level> level = Optional.ofNullable(levelRepository.findLevelById(fish.level())
+                .orElseThrow(() -> new IllegalArgumentException("Sorry this level not exists")));
+        Fish fish1 = Fish.builder()
+                    .name(fish.name())
+                    .level(level.get())
+                    .averageWeight(fish.averageWeight())
+                    .build();
 
-        return fishRepository.save(fish);
+        return fishRepository.save(fish1);
     }
 
     @Override

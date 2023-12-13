@@ -53,7 +53,4 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Hunting> huntings;
 
-    @ManyToMany(mappedBy = "participants")
-    private List<Competition> competitions;
-
 }

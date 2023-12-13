@@ -11,18 +11,28 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Component
 public class HuntingServiceImpl implements HuntingService {
-    private final HuntingRepository huntingRepository;
-    private final FishRepository fishRepository;
-
-    private final MemberRepository memberRepository;
-    private final CompetitionRepository competitionRepository;
-    private final RankingRepository rankingRepository;
 
     @Autowired
+    private final HuntingRepository huntingRepository;
+
+    @Autowired
+    private final FishRepository fishRepository;
+
+    @Autowired
+    private final MemberRepository memberRepository;
+
+    @Autowired
+    private final CompetitionRepository competitionRepository;
+
+    @Autowired
+    private final RankingRepository rankingRepository;
+
+
     public HuntingServiceImpl(HuntingRepository huntingRepository,FishRepository fishRepository,  CompetitionRepository competitionRepository,MemberRepository memberRepository,
                               RankingRepository rankingRepository) {
         this.huntingRepository = huntingRepository;
@@ -50,7 +60,7 @@ public class HuntingServiceImpl implements HuntingService {
     }
 
     public List<Hunting> getAllHuntsForParticipantInCompetition(Competition competition, Member participant) {
-        return huntingRepository.findByCompetitionAndMemberAndFish(competition, participant);
+        return huntingRepository.findByCompetitionAndMember(competition, participant);
     }
 
 
@@ -77,11 +87,11 @@ public class HuntingServiceImpl implements HuntingService {
             throw new IllegalStateException("Hunting can only be recorded on the competition date.");
         }
 
-        if (LocalDateTime.now().isBefore(competition.getStartTime())) {
+        if (LocalTime.now().isBefore(competition.getStartTime())) {
             throw new IllegalStateException("Competition has not started yet.");
         }
 
-        if (LocalDateTime.now().isAfter(competition.getEndTime())) {
+        if (LocalTime.now().isAfter(competition.getEndTime())) {
             throw new IllegalStateException("Competition has already ended.");
         }
 

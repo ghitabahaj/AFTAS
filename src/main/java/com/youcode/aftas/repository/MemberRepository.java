@@ -16,5 +16,5 @@ public interface MemberRepository extends JpaRepository< Member, Long> {
 
      Optional<Member>  findByIdentityNumber(String identity);
 
-    List<Member> findByNumOrNameOrFamilyName(Integer num,String name,String familyName);
+    List<Member> findByIdentityNumberOrNameOrFamilyName(String identityNumber,String name,String familyName);
 }

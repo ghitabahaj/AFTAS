@@ -14,4 +14,6 @@ public interface CompetitionRepository extends JpaRepository<Competition, Long> 
 
     boolean existsByDate(LocalDate date);
     Optional<Competition> findByCode(String code);
+
+
 }
