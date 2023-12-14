@@ -13,6 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class HuntingServiceImpl implements HuntingService {
@@ -48,15 +49,21 @@ public class HuntingServiceImpl implements HuntingService {
         Member member = memberRepository.findById(hunting.getMember().getId()).orElseThrow(() -> new EntityNotFoundException("Member not found with ID: " + hunting.getMember()));
         Competition competition = competitionRepository.findById(hunting.getCompetition().getId()).orElseThrow(() -> new EntityNotFoundException("Competition not found with ID: " + hunting.getCompetition()));
         Fish fish = fishRepository.findByName(hunting.getFish().getName());
+         handleCommonHuntingLogic(member, competition, fish, weight);
 
-        handleCommonHuntingLogic(member, competition, fish, weight);
+        Optional<Hunting> existingHunting = huntingRepository.findHuntingByFishAndMemberAndCompetition(fish, hunting.getMember(), hunting.getCompetition());
+          if (existingHunting.isPresent()){
+              Hunting  hunting1 = existingHunting.get();
+              hunting1.setNumberOfFishes(hunting1.getNumberOfFishes() + 1);
+              return huntingRepository.save(hunting1);
 
-        Hunting existingHunting = huntingRepository.findHuntingByFishAndMemberAndCompetition(fish, hunting.getMember(), hunting.getCompetition());
-        if (existingHunting != null) {
-            return huntingRepository.save(existingHunting);
-        }
-
-        return huntingRepository.save(hunting);
+          }else {
+              hunting.setNumberOfFishes(1L);
+              hunting.setMember(member);
+              hunting.setFish(fish);
+              hunting.setCompetition(competition);
+              return huntingRepository.save(hunting);
+          }
     }
 
     public List<Hunting> getAllHuntsForParticipantInCompetition(Competition competition, Member participant) {
@@ -74,9 +81,16 @@ public class HuntingServiceImpl implements HuntingService {
             Fish fish = hunt.getFish();
             Level fishLevel = fish.getLevel();
 
-            int huntScore = fishLevel.getPoints();
+            int huntScore;
+            if (hunt.getNumberOfFishes() > 1) {
+                huntScore = (int) (fishLevel.getPoints() * hunt.getNumberOfFishes());
+            }else{
+
+                huntScore = fishLevel.getPoints();
+            }
 
             totalScore += huntScore;
+
         }
 
         return totalScore;
@@ -94,7 +108,6 @@ public class HuntingServiceImpl implements HuntingService {
         if (LocalTime.now().isAfter(competition.getEndTime())) {
             throw new IllegalStateException("Competition has already ended.");
         }
-
         Ranking ranking = rankingRepository.findByCompetitionAndMember(competition, participant);
         if (ranking == null) {
             throw new CustomException("This member is not registered for this competition", HttpStatus.UNAUTHORIZED);
@@ -103,8 +116,8 @@ public class HuntingServiceImpl implements HuntingService {
         if (weight < fish.getAverageWeight()) {
             throw new CustomException("The fish can't be counted as a hunt, as it doesn't meet the min weight required", HttpStatus.CONFLICT);
         }
-
-        ranking.setScore(ranking.getRank() + fish.getLevel().getPoints());
+        ranking.setScore(calculateParticipantScore( competition,participant));
         rankingRepository.save(ranking);
+
     }
 }

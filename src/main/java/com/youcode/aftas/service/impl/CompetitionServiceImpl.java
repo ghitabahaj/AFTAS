@@ -96,6 +96,11 @@ public class CompetitionServiceImpl implements CompetitionService {
     }
 
     @Override
+    public Competition findById(Long id) {
+        return competitionRepository.findById(id).orElse(null);
+    }
+
+    @Override
     public List<Competition> findAll() {
         return competitionRepository.findAll();
     }

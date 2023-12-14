@@ -18,7 +18,8 @@ public class Hunting {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    private String numberOfFishes;
+
+    private Long numberOfFishes ;
 
     @ManyToOne
     private Member member;

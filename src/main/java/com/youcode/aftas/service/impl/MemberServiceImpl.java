@@ -24,14 +24,13 @@ public class MemberServiceImpl implements MemberService {
 
     @Autowired
     private final CompetitionRepository competitionRepository;
-    private final HuntingRepository huntingRepository;
 
 
-    public MemberServiceImpl(MemberRepository memberRepository, CompetitionRepository competitionRepository,
-                             HuntingRepository huntingRepository) {
+    public MemberServiceImpl(MemberRepository memberRepository, CompetitionRepository competitionRepository
+                            ) {
         this.memberRepository = memberRepository;
         this.competitionRepository = competitionRepository;
-        this.huntingRepository = huntingRepository;
+
     }
     @Override
     public Member getMemberById(Long id) {

@@ -23,18 +23,20 @@ public class FishRest {
     @GetMapping
     public ResponseEntity<Response<List<FishResDto>>> getAllFish(){
         Response<List<FishResDto>> response = new Response<>();
-//        List<Fish> fish = fishService.getAllFish();
-//        response.setResult(fish.stream()
-//                .map(FishMapper::mapToDto)
-//                .toList());
+        List<Fish> fish = fishService.findAll();
+        response.setResult(fish.stream()
+                .map(FishMapper::mapToDto)
+                .toList());
+        response.setMessage("fishes found ");
         return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{name}")
     public ResponseEntity<Response<FishResDto>> getFishByName(@Valid @PathVariable("name") String name){
         Response<FishResDto> response = new Response<>();
-////        Fish fish = fishService.getFishByName(name);
-//        response.setResult(FishMapper.mapToDto(fish));
+        Fish fish = fishService.getFish(name);
+        response.setMessage("Fish Retrieved Successfully");
+        response.setResult(FishMapper.mapToDto(fish));
         return ResponseEntity.ok(response);
     }
 

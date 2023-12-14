@@ -22,6 +22,8 @@ public interface CompetitionService {
 
     Competition updateCompetition(Competition competition);
 
+    Competition findById(Long id);
+
     List<Competition> findAll();
 
 

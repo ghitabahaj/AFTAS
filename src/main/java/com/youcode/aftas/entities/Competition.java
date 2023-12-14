@@ -1,6 +1,7 @@
 package com.youcode.aftas.entities;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -48,6 +49,7 @@ public class Competition {
     private Double amount;
 
     @OneToMany(mappedBy = "competition")
+    @JsonIgnore
     private List<Ranking> rankings;
 
 

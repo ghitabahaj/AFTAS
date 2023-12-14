@@ -1,5 +1,6 @@
 package com.youcode.aftas.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.youcode.aftas.enums.IdentityDocumentType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -48,9 +49,11 @@ public class Member {
     private String identityNumber;
 
     @OneToMany(mappedBy = "member")
+    @JsonIgnore
     private List<Ranking> rankings;
 
     @OneToMany(mappedBy = "member")
+    @JsonIgnore
     private List<Hunting> huntings;
 
 }

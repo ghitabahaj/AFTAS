@@ -17,6 +17,7 @@ public class Ranking {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private int rank;
+
     private int score;
     @ManyToOne
     private Member member;

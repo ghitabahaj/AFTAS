@@ -9,11 +9,13 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface HuntingRepository extends JpaRepository<Hunting, Long> {
 
     List<Hunting> findByCompetitionAndMember(Competition competition, Member member);
 
-    Hunting findHuntingByFishAndMemberAndCompetition(Fish fish, Member member,Competition competition);
+
+    Optional<Hunting> findHuntingByFishAndMemberAndCompetition(Fish fish, Member member, Competition competition);
 }
