@@ -27,20 +27,19 @@ public class Competition {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @NotBlank(message = "Code is required")
+
     @Column(unique = true)
     private String code;
 
-    @NotNull(message = "Date is required")
+
     private LocalDate date;
 
-    @NotNull(message = "Start time is required")
     private LocalTime startTime;
 
-    @NotNull(message = "End time is required")
+
     private LocalTime endTime;
 
-    @Min(value = 1, message = "Number of participants must be at least 1")
+
     private int numberOfParticipants;
 
     @NotBlank(message = "Location is required")

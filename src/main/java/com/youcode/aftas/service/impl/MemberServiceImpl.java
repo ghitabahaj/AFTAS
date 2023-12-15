@@ -1,5 +1,6 @@
 package com.youcode.aftas.service.impl;
 
+import com.youcode.aftas.DTO.MemberDTO.MemberDTO;
 import com.youcode.aftas.entities.*;
 import com.youcode.aftas.repository.CompetitionRepository;
 import com.youcode.aftas.repository.HuntingRepository;
@@ -9,6 +10,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -38,13 +40,21 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Member addMember(Member member) {
+    public Member addMember(MemberDTO member) {
 
-        if (memberRepository.existsByIdentityNumber(member.getIdentityNumber())) {
+        if (memberRepository.existsByIdentityNumber(member.identityNumber())) {
             throw new IllegalArgumentException("Member with the same identityNumber already exists");
         }
 
-        return memberRepository.save(member);
+        Member member1 = Member.builder()
+                .name(member.name())
+                .familyName(member.familyName())
+                .accessDate(LocalDate.now())
+                .nationality(member.nationality())
+                .identityDocumentType(member.identityDocumentType())
+                .identityNumber(member.identityNumber())
+                .build();
+        return memberRepository.save(member1);
     }
 
     @Override
