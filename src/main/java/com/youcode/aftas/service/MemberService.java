@@ -18,5 +18,10 @@ public interface MemberService {
     void deleteMember(Long id);
     void registerInCompetition(Member member, Competition competition);
 
+    List<Member> findAll();
+
+
+    Member getByIdentityNumber(String id);
+
 
 }

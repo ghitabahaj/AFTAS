@@ -72,7 +72,7 @@ public class HuntingServiceImpl implements HuntingService {
 
 
     @Override
-    public int calculateParticipantScore(Competition competition, Member participant) {
+    public int  calculateParticipantScore(Competition competition, Member participant) {
         List<Hunting> participantHunts =getAllHuntsForParticipantInCompetition(competition, participant);
 
         int totalScore = 0;

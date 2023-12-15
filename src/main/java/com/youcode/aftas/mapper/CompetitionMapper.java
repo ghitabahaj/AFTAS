@@ -1,6 +1,6 @@
 package com.youcode.aftas.mapper;
 
-import com.youcode.aftas.DTO.CompetitionDTO;
+import com.youcode.aftas.DTO.competitionDto.CompetitionDTO;
 import com.youcode.aftas.entities.Competition;
 
 public class CompetitionMapper {

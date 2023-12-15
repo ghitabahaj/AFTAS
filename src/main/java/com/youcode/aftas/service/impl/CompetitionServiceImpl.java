@@ -1,6 +1,6 @@
 package com.youcode.aftas.service.impl;
 
-import com.youcode.aftas.DTO.CompetitionDTO;
+import com.youcode.aftas.DTO.competitionDto.CompetitionDTO;
 import com.youcode.aftas.entities.*;
 import com.youcode.aftas.repository.CompetitionRepository;
 import com.youcode.aftas.service.CompetitionService;
@@ -67,7 +67,7 @@ public class CompetitionServiceImpl implements CompetitionService {
     }
 
     @Override
-    public Optional<Competition> findByCode(String code) {
+    public Competition findByCode(String code) {
         if (code == null || code.isEmpty()) {
             throw new IllegalArgumentException("Code should not be Empty or null");
         }
@@ -76,11 +76,12 @@ public class CompetitionServiceImpl implements CompetitionService {
             throw new IllegalArgumentException("Competition with code " + code + " could not be found");
         }
 
-        return competitionRepository.findByCode(code);
+        return competitionRepository.findByCode(code).orElse(null);
     }
 
     @Override
-    public Page<Competition> findAll(Pageable pageable) {
+    public Page<Competition> findAllCompetitions(Pageable pageable) {
+
         return competitionRepository.findAll(pageable);
     }
 
@@ -123,5 +124,18 @@ public class CompetitionServiceImpl implements CompetitionService {
     public List<Competition> findAll() {
         return competitionRepository.findAll();
     }
+    @Override
+    public List<Competition> availableCompetitions() {
+        return competitionRepository.findAvailableCompetitions(LocalDate.now());
+    }
+
+    @Override
+    public Competition getCompetitionOfTheDay() {
+        return competitionRepository.findCompetitionByDate(LocalDate.now());
+
+
+    }
+
+
 
 }

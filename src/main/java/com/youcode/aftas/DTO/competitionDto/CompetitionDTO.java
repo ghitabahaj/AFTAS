@@ -1,4 +1,4 @@
-package com.youcode.aftas.DTO;
+package com.youcode.aftas.DTO.competitionDto;
 
 import jakarta.validation.constraints.*;
 import lombok.Builder;

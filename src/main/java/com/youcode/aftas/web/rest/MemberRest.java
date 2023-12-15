@@ -15,12 +15,14 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/members")
+@CrossOrigin(origins = "http://localhost:4200")
 public class MemberRest{
 
     private final MemberService memberService;
 
     public MemberRest(MemberService memberService) {
         this.memberService = memberService;
+
     }
 
     @GetMapping("/{id}")
@@ -62,5 +64,20 @@ public class MemberRest{
             return ResponseMessage.created("Member updated successfully", member1);
         }
     }
+
+    @GetMapping("/")
+    public ResponseEntity<Response <List<MemberDTO>>> getAll() {
+        Response <List<MemberDTO>> response = new Response<>();
+        List<Member> members = memberService.findAll();
+        response.setResult(members.stream()
+                .map(MemberMapper::mapToDto)
+                .toList());
+        response.setMessage("Members fetched successfully");
+
+        return ResponseEntity.ok(response);
+    }
+
+
+
 
 }

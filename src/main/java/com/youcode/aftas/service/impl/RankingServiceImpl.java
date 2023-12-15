@@ -50,10 +50,16 @@ public class RankingServiceImpl implements RankingService {
     }
 
     @Override
-    public List<Ranking> sortMemberWithPoints() {
+    public List<Ranking> sortMemberWithPoints(Long competitionId) {
 
-        List<Ranking> rankings = rankingRepository.findByOrderByScoreAsc();
+        return rankingRepository.findByCompetitionIdOrderByScoreDesc(competitionId);
+    }
 
-        return rankings;
+
+
+    @Override
+    public List<Member> FindByCompetition(Long competitionId){
+      return null;
+
     }
 }

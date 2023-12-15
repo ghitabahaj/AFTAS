@@ -5,6 +5,7 @@ import com.youcode.aftas.entities.*;
 import com.youcode.aftas.repository.CompetitionRepository;
 import com.youcode.aftas.repository.HuntingRepository;
 import com.youcode.aftas.repository.MemberRepository;
+import com.youcode.aftas.repository.RankingRepository;
 import com.youcode.aftas.service.MemberService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,14 +25,20 @@ public class MemberServiceImpl implements MemberService {
     @Autowired
     private final MemberRepository memberRepository;
 
+
+    @Autowired
+    private final RankingRepository rankingRepository;
+
+
     @Autowired
     private final CompetitionRepository competitionRepository;
 
 
-    public MemberServiceImpl(MemberRepository memberRepository, CompetitionRepository competitionRepository
+    public MemberServiceImpl(MemberRepository memberRepository, CompetitionRepository competitionRepository, RankingRepository rankingRepository
                             ) {
         this.memberRepository = memberRepository;
         this.competitionRepository = competitionRepository;
+        this.rankingRepository = rankingRepository;
 
     }
     @Override
@@ -60,7 +67,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public List<Member> searchMember(String keySearch) {
 
-            return this.memberRepository.findByIdentityNumberOrNameOrFamilyName(keySearch, keySearch, keySearch);
+            return this.memberRepository.searchMember(keySearch);
 
     }
 
@@ -89,6 +96,11 @@ public class MemberServiceImpl implements MemberService {
             throw new EntityNotFoundException("Member not found with identityNumber: " + member.getIdentityNumber());
         }
 
+        if(rankingRepository.findByCompetitionAndMember(competition, member)!=null) {
+
+            throw new IllegalArgumentException("This Member has already registred .");
+        }
+
         if (isRegistrationAllowed(member, competition)) {
 
             Ranking ranking = new Ranking();
@@ -102,8 +114,8 @@ public class MemberServiceImpl implements MemberService {
                 member.setRankings(new ArrayList<>());
             }
             member.getRankings().add(ranking);
-
-            memberRepository.save(member);
+           rankingRepository.save(ranking);
+           memberRepository.save(member);
 
             int currentNumberOfParticipants = competition.getNumberOfParticipants();
             competition.setNumberOfParticipants(currentNumberOfParticipants + 1);
@@ -113,10 +125,23 @@ public class MemberServiceImpl implements MemberService {
         }
     }
 
+    @Override
+    public List<Member> findAll() {
+        return memberRepository.findAll();
+    }
+
+    @Override
+    public Member getByIdentityNumber(String id) {
+        return memberRepository.findByIdentityNumber(id).orElse(null);
+    }
+
     private boolean isRegistrationAllowed(Member member, Competition competition) {
         LocalTime registrationDeadline = competition.getStartTime().minusHours(24);
         LocalTime currentDateTime = LocalTime.now();
-        return currentDateTime.isBefore(registrationDeadline);
+        LocalDate currentDate = LocalDate.now();
+
+        return currentDate.isBefore(competition.getDate()) ||
+                (currentDate.isEqual(competition.getDate()) && currentDateTime.isBefore(registrationDeadline));
     }
 
 
