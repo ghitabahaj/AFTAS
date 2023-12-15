@@ -51,6 +51,9 @@ public class RankingServiceImpl implements RankingService {
 
     @Override
     public List<Ranking> sortMemberWithPoints() {
-        return null;
+
+        List<Ranking> rankings = rankingRepository.findByOrderByScoreAsc();
+
+        return rankings;
     }
 }
