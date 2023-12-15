@@ -11,4 +11,5 @@ import java.util.Optional;
 @Repository
 public interface LevelRepository  extends JpaRepository<Level, Long> {
     Optional<Level> findLevelById(Long id);
+    Optional<Level> findLevelByPoints(int points);
 }

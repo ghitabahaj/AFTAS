@@ -1,5 +1,6 @@
 package com.youcode.aftas.service.impl;
 
+import com.youcode.aftas.DTO.CompetitionDTO;
 import com.youcode.aftas.entities.*;
 import com.youcode.aftas.repository.CompetitionRepository;
 import com.youcode.aftas.service.CompetitionService;
@@ -22,20 +23,29 @@ public class CompetitionServiceImpl implements CompetitionService {
 
 
     @Override
-    public Competition addCompetition(Competition competition) {
+    public Competition addCompetition(CompetitionDTO competition) {
 
-        if (competition.getDate().isBefore(LocalDate.now())) {
+        if (competition.date().isBefore(LocalDate.now())) {
             throw new IllegalArgumentException("Competition date must be today or a future date.");
         }
 
-        if (!competition.getStartTime().equals(competition.getEndTime()) && competition.getEndTime().isAfter(competition.getStartTime())) {
-            if (!isCompetitionExistsOnSameDay(competition.getDate())) {
-                if (competition.getId() == null) {
-                    String locationAbbreviation = competition.getLocation().substring(0, Math.min(competition.getLocation().length(), 3));
-                    String formattedDate = competition.getDate().format(DateTimeFormatter.ofPattern("dd-MM-yy"));
+        if (!competition.startTime().equals(competition.endTime()) && competition.endTime().isAfter(competition.startTime())) {
+            if (!isCompetitionExistsOnSameDay(competition.date())) {
+                if (competition.id() == null) {
+                    String locationAbbreviation = competition.location().substring(0, Math.min(competition.location().length(), 3));
+                    String formattedDate = competition.date().format(DateTimeFormatter.ofPattern("dd-MM-yy"));
                     String generatedName = locationAbbreviation + "-" + formattedDate;
-                    competition.setCode(generatedName);
-                    return competitionRepository.save(competition);
+                    Competition competition1 = Competition.builder()
+                            .amount(competition.amount())
+                            .code(generatedName)
+                            .location(competition.location())
+                            .endTime(competition.endTime())
+                            .startTime(competition.startTime())
+                            .numberOfParticipants(competition.numberOfParticipants())
+                            .date(competition.date())
+                            .build();
+                    return competitionRepository.save(competition1);
+
                 }
             } else {
                 throw new IllegalArgumentException("There is already a competition scheduled on the same day.");
@@ -43,8 +53,17 @@ public class CompetitionServiceImpl implements CompetitionService {
         } else {
             throw new IllegalArgumentException("Invalid start and end times for the competition.");
         }
+        Competition competition1 = Competition.builder()
+                .amount(competition.amount())
+                .code(competition.code())
+                .location(competition.location())
+                .endTime(competition.endTime())
+                .startTime(competition.startTime())
+                .numberOfParticipants(competition.numberOfParticipants())
+                .date(competition.date())
+                .build();
+        return competitionRepository.save(competition1);
 
-        return competition;
     }
 
     @Override

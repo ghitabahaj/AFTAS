@@ -34,7 +34,6 @@ public class RankingServiceImpl implements RankingService {
     public void delete(Ranking member) {
 
     }
-
     @Override
     public Optional<Ranking> findById(Ranking member) {
         return Optional.empty();
