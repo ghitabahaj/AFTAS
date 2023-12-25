@@ -19,7 +19,7 @@ public class Hunting {
     private Long id;
 
 
-    private Long numberOfFishes ;
+    private Integer numberOfFishes ;
 
     @ManyToOne
     private Member member;

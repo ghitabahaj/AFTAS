@@ -1,6 +1,7 @@
 package com.youcode.aftas.service.impl;
 
 import com.youcode.aftas.DTO.MemberDTO.MemberDTO;
+import com.youcode.aftas.embedded.RankPrimaryId;
 import com.youcode.aftas.entities.*;
 import com.youcode.aftas.repository.CompetitionRepository;
 import com.youcode.aftas.repository.HuntingRepository;
@@ -14,6 +15,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -107,6 +109,8 @@ public class MemberServiceImpl implements MemberService {
 
             ranking.setRank(0);
             ranking.setScore(0);
+            ranking.setRankPrimaryId(new RankPrimaryId().builder()
+                    .competitionId(competition.getId()).memberId(member.getId()).build());
             ranking.setCompetition(competition);
             ranking.setMember(member);
 
@@ -136,12 +140,9 @@ public class MemberServiceImpl implements MemberService {
     }
 
     private boolean isRegistrationAllowed(Member member, Competition competition) {
-        LocalTime registrationDeadline = competition.getStartTime().minusHours(24);
-        LocalTime currentDateTime = LocalTime.now();
-        LocalDate currentDate = LocalDate.now();
+        LocalDate registrationDeadline = LocalDate.now();
 
-        return currentDate.isBefore(competition.getDate()) ||
-                (currentDate.isEqual(competition.getDate()) && currentDateTime.isBefore(registrationDeadline));
+        return ChronoUnit.DAYS.between(registrationDeadline, competition.getDate()) > 1;
     }
 
 

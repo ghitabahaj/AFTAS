@@ -18,4 +18,6 @@ public interface HuntingRepository extends JpaRepository<Hunting, Long> {
 
 
     Optional<Hunting> findHuntingByFishAndMemberAndCompetition(Fish fish, Member member, Competition competition);
+
+
 }

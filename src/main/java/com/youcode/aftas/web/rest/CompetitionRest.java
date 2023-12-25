@@ -13,6 +13,10 @@ import com.youcode.aftas.service.RankingService;
 import com.youcode.aftas.utils.Response;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,11 +31,12 @@ public class CompetitionRest {
     private final RankingService rankingService;
 
     @GetMapping("/")
-    public ResponseEntity<Response <List<CompetitionDTO>>> getAllCompetitions() {
-        Response <List<CompetitionDTO>> response = new Response<>();
+    public ResponseEntity<Response <List<CompetitionDetailsDto>>> getAllCompetitions() {
+        Response <List<CompetitionDetailsDto>> response = new Response<>();
         List<Competition> competitions = competitionService.findAll();
+
         response.setResult(competitions.stream()
-                .map(CompetitionMapper::mapToDto)
+                .map(CompetitionDetailsDto::toCompetitionDetailsDto)
                 .toList());
         response.setMessage("Competitions fetched successfully");
 
@@ -85,6 +90,16 @@ public class CompetitionRest {
 
     }
 
+    @GetMapping("/paged")
+    public ResponseEntity<Page<CompetitionDetailsDto>> getAllCompetitionsPaged(Pageable pageable) {
+        Page<Competition> competitions = competitionService.findAllCompetitions(pageable);
+
+        Page<CompetitionDetailsDto> competitionsDTO = new PageImpl<>(competitions.stream()
+                .map(CompetitionDetailsDto::toCompetitionDetailsDto)
+                .toList(), pageable, competitions.getTotalElements());
+
+        return new ResponseEntity<>(competitionsDTO, HttpStatus.OK);
+    }
 
 
 }

@@ -2,6 +2,7 @@ package com.youcode.aftas.service;
 
 
 import com.youcode.aftas.DTO.competitionDto.CompetitionDTO;
+import com.youcode.aftas.DTO.competitionDto.CompetitionDetailsDto;
 import com.youcode.aftas.entities.Competition;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.Page;

@@ -1,5 +1,6 @@
 package com.youcode.aftas.service.impl;
 
+import com.youcode.aftas.DTO.huntingDTO.huntingReqDTO;
 import com.youcode.aftas.entities.*;
 import com.youcode.aftas.handler.exception.CustomException;
 import com.youcode.aftas.repository.*;
@@ -44,26 +45,51 @@ public class HuntingServiceImpl implements HuntingService {
     }
 
     @Override
-    public Hunting addHunting(Hunting hunting, Double weight) {
+    public Hunting addHunting(huntingReqDTO hunting) {
 
-        Member member = memberRepository.findById(hunting.getMember().getId()).orElseThrow(() -> new EntityNotFoundException("Member not found with ID: " + hunting.getMember()));
-        Competition competition = competitionRepository.findById(hunting.getCompetition().getId()).orElseThrow(() -> new EntityNotFoundException("Competition not found with ID: " + hunting.getCompetition()));
-        Fish fish = fishRepository.findByName(hunting.getFish().getName());
-         handleCommonHuntingLogic(member, competition, fish, weight);
+        Member member = memberRepository.findByIdentityNumber(hunting.IdentityNumber()).orElseThrow(() -> new EntityNotFoundException("Member not found with IdentityNumber: " + hunting.IdentityNumber()));
+        Competition competition = competitionRepository.findByCode(hunting.competitionCode()).orElseThrow(() -> new EntityNotFoundException("Competition not found with ID: " + hunting.competitionCode()));
+        Fish fish = fishRepository.findByName(hunting.name());
+        handleCommonHuntingLogic(member, competition, fish, hunting.weight());
 
-        Optional<Hunting> existingHunting = huntingRepository.findHuntingByFishAndMemberAndCompetition(fish, hunting.getMember(), hunting.getCompetition());
-          if (existingHunting.isPresent()){
+        Optional<Hunting> existingHunting = huntingRepository.findHuntingByFishAndMemberAndCompetition(fish , member, competition);
+        Hunting huntsaved ;
+
+
+        if (existingHunting.isPresent()){
               Hunting  hunting1 = existingHunting.get();
-              hunting1.setNumberOfFishes(hunting1.getNumberOfFishes() + 1);
-              return huntingRepository.save(hunting1);
+
+              Hunting updateHunting = Hunting.builder()
+                      .id(hunting1.getId())
+                      .fish(hunting1.getFish())
+                      .numberOfFishes(hunting1.getNumberOfFishes() + 1)
+                      .competition(hunting1.getCompetition())
+                      .member(hunting1.getMember())
+                      .build();
+            huntsaved =  huntingRepository.save(updateHunting);
 
           }else {
-              hunting.setNumberOfFishes(1L);
-              hunting.setMember(member);
-              hunting.setFish(fish);
-              hunting.setCompetition(competition);
-              return huntingRepository.save(hunting);
+
+              Hunting createHunting = Hunting.builder()
+                      .fish(fish)
+                      .competition(competition)
+                      .member(member)
+                      .numberOfFishes(1)
+                      .build();
+
+            huntsaved =  huntingRepository.save(createHunting);
           }
+
+        Ranking ranking = rankingRepository.findByCompetitionAndMember(competition, member);
+        if (ranking == null) {
+            throw new CustomException("This member is not registered for this competition", HttpStatus.UNAUTHORIZED);
+        }
+        ranking.setScore(calculateParticipantScore(competition,member));
+        rankingRepository.save(ranking);
+
+        return  huntsaved;
+
+
     }
 
     public List<Hunting> getAllHuntsForParticipantInCompetition(Competition competition, Member participant) {
@@ -80,17 +106,12 @@ public class HuntingServiceImpl implements HuntingService {
         for (Hunting hunt : participantHunts) {
             Fish fish = hunt.getFish();
             Level fishLevel = fish.getLevel();
+              int huntScore;
+            huntScore = (int) (fishLevel.getPoints() * hunt.getNumberOfFishes());
 
-            int huntScore;
-            if (hunt.getNumberOfFishes() > 1) {
-                huntScore = (int) (fishLevel.getPoints() * hunt.getNumberOfFishes());
-            }else{
-
-                huntScore = fishLevel.getPoints();
-            }
 
             totalScore += huntScore;
-
+            System.out.println("hhhh");
         }
 
         return totalScore;
@@ -108,16 +129,12 @@ public class HuntingServiceImpl implements HuntingService {
         if (LocalTime.now().isAfter(competition.getEndTime())) {
             throw new IllegalStateException("Competition has already ended.");
         }
-        Ranking ranking = rankingRepository.findByCompetitionAndMember(competition, participant);
-        if (ranking == null) {
-            throw new CustomException("This member is not registered for this competition", HttpStatus.UNAUTHORIZED);
-        }
+
 
         if (weight < fish.getAverageWeight()) {
             throw new CustomException("The fish can't be counted as a hunt, as it doesn't meet the min weight required", HttpStatus.CONFLICT);
         }
-        ranking.setScore(calculateParticipantScore( competition,participant));
-        rankingRepository.save(ranking);
+
 
     }
 }

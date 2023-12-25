@@ -51,8 +51,14 @@ public class RankingServiceImpl implements RankingService {
 
     @Override
     public List<Ranking> sortMemberWithPoints(Long competitionId) {
+        List<Ranking> rankings = rankingRepository.findByCompetitionIdOrderByScoreDesc(competitionId);
+        int rank = 1;
 
-        return rankingRepository.findByCompetitionIdOrderByScoreDesc(competitionId);
+        for (Ranking ranking : rankings) {
+            ranking.setRank(rank++);
+        }
+
+        return rankings;
     }
 
 

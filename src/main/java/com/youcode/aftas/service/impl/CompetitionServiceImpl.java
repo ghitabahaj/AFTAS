@@ -1,9 +1,12 @@
 package com.youcode.aftas.service.impl;
 
 import com.youcode.aftas.DTO.competitionDto.CompetitionDTO;
+import com.youcode.aftas.DTO.competitionDto.CompetitionDetailsDto;
 import com.youcode.aftas.entities.*;
 import com.youcode.aftas.repository.CompetitionRepository;
+import com.youcode.aftas.repository.RankingRepository;
 import com.youcode.aftas.service.CompetitionService;
+import com.youcode.aftas.service.RankingService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -20,6 +23,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CompetitionServiceImpl implements CompetitionService {
     private final CompetitionRepository competitionRepository;
+    private final RankingService rankingService;
 
 
     @Override
@@ -122,7 +126,14 @@ public class CompetitionServiceImpl implements CompetitionService {
 
     @Override
     public List<Competition> findAll() {
-        return competitionRepository.findAll();
+        List<Competition> competitions = competitionRepository.findAll();
+
+        competitions.forEach(competition -> {
+            List<Ranking> rankings = rankingService.sortMemberWithPoints(competition.getId());
+            competition.setRankings(rankings);
+        });
+
+        return competitions;
     }
     @Override
     public List<Competition> availableCompetitions() {
