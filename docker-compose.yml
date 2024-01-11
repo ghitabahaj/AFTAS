@@ -6,9 +6,12 @@ services:
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: password
-      POSTGRES_DB: taskflow
+      POSTGRES_DB: aftas
     ports:
       - "5432:5432"
+    networks:
+      - aftas-network
+    restart: unless-stopped
 
   spring-app:
     build:
@@ -19,6 +22,25 @@ services:
     depends_on:
       - postgresql
     environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5432/taskflow
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5432/aftas
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: password
+    networks:
+      - aftas-network
+    restart: unless-stopped
+
+  angular-app:
+    build:
+      context: C:/Users/adel/Desktop/Aftas-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "80:80"
+    depends_on:
+      - spring-app
+    networks:
+      - aftas-network
+    restart: unless-stopped
+
+networks:
+  aftas-network:
+    driver: bridge
