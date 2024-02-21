@@ -1,6 +1,5 @@
 package com.youcode.aftas.entities;
 
-import com.youcode.aftas.entities.Token;
 import com.youcode.aftas.enums.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -37,7 +36,7 @@ public class User implements UserDetails {
 
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
-    return role.getAuthorities();
+    return null;
   }
 
   @Override

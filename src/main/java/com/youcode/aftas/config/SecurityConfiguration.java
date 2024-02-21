@@ -13,8 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 
-import static com.youcode.aftas.enums.Permission.*;
-import static com.youcode.aftas.enums.Role.ADMIN;
+import static com.youcode.aftas.enums.Role.JURY;
 import static com.youcode.aftas.enums.Role.MANAGER;
 import static org.springframework.http.HttpMethod.*;
 import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
@@ -47,7 +46,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST_URL)
                                 .permitAll()
-                                .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), MANAGER.name())
+                                .requestMatchers("/api/v1/management/**").hasAnyRole(JURY.name(), MANAGER.name())
                                 .anyRequest()
                                 .authenticated()
                 )
