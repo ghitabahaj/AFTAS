@@ -1,13 +1,15 @@
 package com.youcode.aftas.web.rest;
 
 import com.youcode.aftas.auth.AuthenticationRequest;
-import com.youcode.aftas.service.AuthenticationService;
 import com.youcode.aftas.auth.AuthenticationResponse;
 import com.youcode.aftas.auth.RegisterRequest;
+import com.youcode.aftas.service.AuthenticationService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import java.io.IOException;
 @RestController
 @RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
@@ -30,13 +32,17 @@ public class AuthenticationController {
     return ResponseEntity.ok(service.authenticate(request));
   }
 
-//  @PostMapping("/refresh-token")
-//  public void refreshToken(
-//      HttpServletRequest request,
-//      HttpServletResponse response
-//  ) throws IOException {
-//    service.refreshToken(request, response);
-//  }
+
+
+  @PostMapping("/refresh-token")
+  public void refreshToken(
+      HttpServletRequest request,
+      HttpServletResponse response
+  ) throws IOException {
+
+
+    service.refreshToken(request, response);
+  }
 
 
 }
